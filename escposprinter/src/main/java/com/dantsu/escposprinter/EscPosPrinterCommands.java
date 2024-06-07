@@ -583,6 +583,17 @@ public class EscPosPrinterCommands {
      * @return Fluent interface
      */
     public EscPosPrinterCommands printImage(byte[] image) throws EscPosConnectionException {
+        return this.printImage(image, false);
+    }
+
+    /**
+     * Print image with the connected printer.
+     *
+     * @param image Bytes contain the image in ESC/POS command
+     * @param write_only if want only to write to buffer but still not send it to printer
+     * @return Fluent interface
+     */
+    public EscPosPrinterCommands printImage(byte[] image, boolean write_only) throws EscPosConnectionException {
         if (!this.printerConnection.isConnected()) {
             return this;
         }
@@ -591,7 +602,9 @@ public class EscPosPrinterCommands {
 
         for (byte[] bytes : bytesToPrint) {
             this.printerConnection.write(bytes);
-            this.printerConnection.send();
+            if (write_only == false) {
+                this.printerConnection.send();
+            }
         }
 
         return this;
